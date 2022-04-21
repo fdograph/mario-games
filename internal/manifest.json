@@ -1,6 +1,6 @@
 {
   ".svelte-kit/runtime/client/start.js": {
-    "file": "start-7798dbf9.js",
+    "file": "start-9fab60e6.js",
     "src": ".svelte-kit/runtime/client/start.js",
     "isEntry": true,
     "imports": [
@@ -9,7 +9,6 @@
     "dynamicImports": [
       "src/routes/__layout.svelte",
       ".svelte-kit/runtime/components/error.svelte",
-      "src/routes/board.svelte",
       "src/routes/index.svelte"
     ]
   },
@@ -34,27 +33,13 @@
       "_index-dd47dd75.js"
     ]
   },
-  "src/routes/board.svelte": {
-    "file": "pages/board.svelte-9079ece2.js",
-    "src": "src/routes/board.svelte",
-    "isEntry": true,
-    "isDynamicEntry": true,
-    "imports": [
-      "_index-dd47dd75.js",
-      "_nCardGame-64515d16.js"
-    ],
-    "css": [
-      "assets/pages/board.svelte-41dbb873.css"
-    ]
-  },
   "src/routes/index.svelte": {
-    "file": "pages/index.svelte-68148d25.js",
+    "file": "pages/index.svelte-396d4c4e.js",
     "src": "src/routes/index.svelte",
     "isEntry": true,
     "isDynamicEntry": true,
     "imports": [
-      "_index-dd47dd75.js",
-      "_nCardGame-64515d16.js"
+      "_index-dd47dd75.js"
     ],
     "css": [
       "assets/pages/index.svelte-68d92d4b.css"
@@ -62,8 +47,5 @@
   },
   "_index-dd47dd75.js": {
     "file": "chunks/index-dd47dd75.js"
-  },
-  "_nCardGame-64515d16.js": {
-    "file": "chunks/nCardGame-64515d16.js"
   }
 }
