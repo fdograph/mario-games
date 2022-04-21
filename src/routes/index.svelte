@@ -1,33 +1,80 @@
 <script lang="ts">
-    import { getUnsortedCardPairs, getBackfaceImg } from '../games/nCardGame';
+    import {
+      getUnsortedCardPairs,
+      getBackfaceImg
+    } from '../games/nCardGame';
+
+    const delay = (t: number) => new Promise(r => setTimeout(r, t));
 
     const backface = getBackfaceImg();
     const pairs = getUnsortedCardPairs();
 
+    let isAnimating = false;
     let revealed = new Set<number>();
     let currentPlay = new Set<number>();
-    let cards = pairs.map((c, i) => ({
-      ...c,
-      revealed: revealed.has(i) || currentPlay.has(i)
-    }));
+    let cards = buildCards();
 
-    function updatePlay(idx: number) {
-      return new Set<number>([...currentPlay, idx]);
+    async function revealCard(card: HTMLButtonElement, direction: 'normal' | 'reverse' = 'normal') {
+      isAnimating = true;
+      const animation = card.animate(
+        [{ transform: 'rotateY(0.5turn)' }, { transform: 'rotateY(2turn)' }],
+        { duration: 1000, easing: 'ease', direction }
+      );
+
+      await animation.finished;
+      isAnimating = false;
+
+      return;
+    }
+
+    function isMatchPlay() {
+      const types = new Set([...currentPlay].map(cIdx => pairs[cIdx].type));
+      return types.size === 1;
+    }
+
+    function buildCards() {
+      return pairs.map((c, i) => ({
+        ...c,
+        revealed: revealed.has(i) || currentPlay.has(i)
+      }));
+    }
+
+    async function updatePlay(card: HTMLButtonElement, idx: number) {
+      if(currentPlay.size === 2 || isAnimating) {
+        return;
+      }
+
+      console.log('Revealing...');
+
+      await revealCard(card);
+      currentPlay = new Set<number>([...currentPlay, idx]);
+      cards = buildCards();
+
+      console.log('Revealed...');
+      console.log('Ready for more');
+
+      if(currentPlay.size === 2) {
+        if(isMatchPlay()) {
+          revealed = new Set<number>([...revealed, ...currentPlay]);
+          currentPlay = new Set<number>();
+          console.log('RIGHT!!! congrats!');
+        } else {
+          console.log('WRONG!!!! resetting play');
+          await Promise.all([...currentPlay].map(idx =>
+            revealCard(document.querySelector(`.card[data-target-idx="${idx}"]`), 'reverse')
+          ));
+          currentPlay = new Set<number>();
+          console.log('Play resetted');
+        }
+
+        cards = buildCards();
+      }
     }
 
     function onCardClick(event: MouseEvent) {
       const target = event.currentTarget as HTMLButtonElement;
-      currentPlay = updatePlay(Number(target.dataset.targetIdx));
-
-      cards = pairs.map((c, i) => ({
-        ...c,
-        revealed: revealed.has(i) || currentPlay.has(i)
-      }));
-
-      console.log({idx: target.dataset.targetIdx, currentPlay});
+      updatePlay(target, Number(target.dataset.targetIdx));
     }
-
-
 </script>
 
 <div class="memory-game">
@@ -50,15 +97,6 @@
 </div>
 
 <style>
-    @keyframes flip {
-        0% {
-            transform: rotateY(0.5turn);
-        }
-        100% {
-            transform: rotateY(2turn);
-        }
-    }
-
     .memory-game {
         @apply h-full p-6 flex items-stretch justify-center;
         background-image: linear-gradient(140deg, #ffffff 12.50%, #008cff 12.50%, #008cff 25%, #fff 25%, #fff 37.50%, #ff0077 37.50%, #ff0077 50%, #ffffff 50%, #ffffff 62.50%, #008cff 62.50%, #008cff 75%, #fff 75%, #fff 87.50%, #ff0077 87.50%, #ff0077 100%);
@@ -92,11 +130,7 @@
     }
 
     .revealed {
-        animation-name: flip;
-        animation-duration: 1s;
-        animation-iteration-count: 1;
-        animation-timing-function: ease;
-        animation-fill-mode: forwards;
+        transform: rotateY(2turn);
     }
 
     .face {

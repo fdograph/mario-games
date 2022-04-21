@@ -1,6 +1,8 @@
 import adapter from '@sveltejs/adapter-static';
 import preprocess from 'svelte-preprocess';
 
+const prod = process.env.NODE_ENV === 'production';
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	// Consult https://github.com/sveltejs/svelte-preprocess
@@ -17,7 +19,7 @@ const config = {
 		}),
 
 		paths: {
-			base: '/mario-games'
+			base: prod ? '/mario-games' : ''
 		},
 
 		appDir: 'internal',
