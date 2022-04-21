@@ -1,6 +1,6 @@
 {
   ".svelte-kit/runtime/client/start.js": {
-    "file": "start-80a4c453.js",
+    "file": "start-53805739.js",
     "src": ".svelte-kit/runtime/client/start.js",
     "isEntry": true,
     "imports": [
@@ -48,7 +48,7 @@
     ]
   },
   "src/routes/index.svelte": {
-    "file": "pages/index.svelte-2a32d429.js",
+    "file": "pages/index.svelte-bba64574.js",
     "src": "src/routes/index.svelte",
     "isEntry": true,
     "isDynamicEntry": true,
@@ -57,7 +57,7 @@
       "_nCardGame-64515d16.js"
     ],
     "css": [
-      "assets/pages/index.svelte-9f4589af.css"
+      "assets/pages/index.svelte-71674f6f.css"
     ]
   },
   "_index-dd47dd75.js": {
