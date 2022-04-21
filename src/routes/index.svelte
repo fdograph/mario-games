@@ -14,6 +14,15 @@
     let currentPlay = new Set<number>();
     let cards = buildCards();
 
+    async function animateBg() {
+      const animation = document.querySelector('.memory-game').animate(
+          [{ backgroundPosition: '0 center' }, { backgroundPosition: ' 100px center' }],
+          { duration: 150, easing: 'steps(2)', direction: 'normal', iterations: 10 }
+      );
+
+      return animation.finished;
+    }
+
     async function revealCard(card: HTMLButtonElement, direction: 'normal' | 'reverse' = 'normal') {
       isAnimating = true;
       const animation = card.animate(
@@ -57,6 +66,7 @@
         if(isMatchPlay()) {
           revealed = new Set<number>([...revealed, ...currentPlay]);
           currentPlay = new Set<number>();
+          await animateBg();
           console.log('RIGHT!!! congrats!');
         } else {
           console.log('WRONG!!!! resetting play');
@@ -99,8 +109,9 @@
 <style>
     .memory-game {
         @apply h-full p-6 flex items-stretch justify-center;
-        background-image: linear-gradient(140deg, #ffffff 12.50%, #008cff 12.50%, #008cff 25%, #fff 25%, #fff 37.50%, #ff0077 37.50%, #ff0077 50%, #ffffff 50%, #ffffff 62.50%, #008cff 62.50%, #008cff 75%, #fff 75%, #fff 87.50%, #ff0077 87.50%, #ff0077 100%);
+        background-image: linear-gradient(-40deg, #ffffff 12.50%, #008cff 12.50%, #008cff 25%, #fff 25%, #fff 37.50%, #ff0077 37.50%, #ff0077 50%, #ffffff 50%, #ffffff 62.50%, #008cff 62.50%, #008cff 75%, #fff 75%, #fff 87.50%, #ff0077 87.50%, #ff0077 100%);
         background-size: 99.57px 83.55px;
+        background-position: 0 center;
     }
 
     .cards-board {
