@@ -6,6 +6,7 @@
     } from '../games/nCardGame';
 
     const backface = getBackfaceImg();
+    const highlight = getHighlightImg();
     const pairs = getUnsortedCardPairs();
 
     let isAnimating = false;
@@ -92,7 +93,7 @@
 <div class="memory-game">
     <div class="cards-board">
         {#each cards as cardData, index}
-            <div class="card-wrapper" >
+            <div class="card-wrapper" style="--highlight-img: url({highlight});" >
                 <button
                     class="card {cardData.revealed ? 'revealed' : ''}"
                     title="{cardData.name}"
@@ -139,7 +140,7 @@
         content: "";
         display: none;
         position: absolute;
-        background-image: url('cards/highlight.png');
+        background-image: var(--highlight-img);
         background-size: contain;
         background-position: center center;
         aspect-ratio: 8/11;
