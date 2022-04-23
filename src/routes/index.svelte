@@ -1,10 +1,9 @@
 <script lang="ts">
     import {
       getUnsortedCardPairs,
-      getBackfaceImg
+      getBackfaceImg,
+      getHighlightImg
     } from '../games/nCardGame';
-
-    const delay = (t: number) => new Promise(r => setTimeout(r, t));
 
     const backface = getBackfaceImg();
     const pairs = getUnsortedCardPairs();
@@ -15,14 +14,17 @@
     let cards = buildCards();
 
     async function animateBg() {
+      isAnimating = true;
       const animation = document.querySelector('.memory-game').animate(
           [{ backgroundPosition: '0 center' }, { backgroundPosition: ' 100px center' }],
           { duration: 150, easing: 'steps(2)', direction: 'normal', iterations: 10 }
       );
 
-      return animation.finished;
-    }
+      await animation.finished;
+      isAnimating = false;
 
+      return;
+    }
     async function revealCard(card: HTMLButtonElement, direction: 'normal' | 'reverse' = 'normal') {
       isAnimating = true;
       const animation = card.animate(
@@ -49,7 +51,7 @@
     }
 
     async function updatePlay(card: HTMLButtonElement, idx: number) {
-      if(currentPlay.size === 2 || isAnimating) {
+      if(currentPlay.size === 2 || isAnimating || revealed.has(idx) || currentPlay.has(idx)) {
         return;
       }
 
@@ -60,25 +62,25 @@
       cards = buildCards();
 
       console.log('Revealed...');
-      console.log('Ready for more');
 
-      if(currentPlay.size === 2) {
-        if(isMatchPlay()) {
-          revealed = new Set<number>([...revealed, ...currentPlay]);
-          currentPlay = new Set<number>();
-          await animateBg();
-          console.log('RIGHT!!! congrats!');
-        } else {
-          console.log('WRONG!!!! resetting play');
-          await Promise.all([...currentPlay].map(idx =>
-            revealCard(document.querySelector(`.card[data-target-idx="${idx}"]`), 'reverse')
-          ));
-          currentPlay = new Set<number>();
-          console.log('Play resetted');
-        }
-
-        cards = buildCards();
+      if(currentPlay.size !== 2){
+        console.log('Ready for more');
+        return;
       }
+
+      if(isMatchPlay()) {
+        revealed = new Set<number>([...revealed, ...currentPlay]);
+        await animateBg();
+        console.log('RIGHT!!! congrats!');
+      } else {
+        console.log('WRONG!!!! resetting play');
+        await Promise.all([...currentPlay].map(idx =>
+        revealCard(document.querySelector(`.card[data-target-idx="${idx}"]`), 'reverse')
+        ));
+      }
+
+      currentPlay = new Set<number>();
+      cards = buildCards();
     }
 
     function onCardClick(event: MouseEvent) {
@@ -90,7 +92,7 @@
 <div class="memory-game">
     <div class="cards-board">
         {#each cards as cardData, index}
-            <div class="card-wrapper">
+            <div class="card-wrapper" >
                 <button
                     class="card {cardData.revealed ? 'revealed' : ''}"
                     title="{cardData.name}"
@@ -127,9 +129,31 @@
     }
 
     .card-wrapper {
+        position: relative;
         display: flex;
         justify-content: center;
         perspective: 1000px;
+    }
+
+    .card-wrapper::before {
+        content: "";
+        display: none;
+        position: absolute;
+        background-image: url('cards/highlight.png');
+        background-size: contain;
+        background-position: center center;
+        aspect-ratio: 8/11;
+        z-index: 10;
+        flex-grow: 1;
+        height: 130%;
+        left: 50%;
+        top: 50%;
+        transform: translateX(-50%) translateY(-50%);
+        pointer-events: none;
+    }
+
+    .card-wrapper:focus-within::before {
+        display: block;
     }
 
     .card {

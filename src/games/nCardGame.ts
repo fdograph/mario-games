@@ -1,11 +1,15 @@
-import MushroomCardImg from './cards/mushroom.png';
-import FlowerCardImg from './cards/flower.png';
-import Coin10CardImg from './cards/coin10.png';
-import Coin20CardImg from './cards/coin20.png';
-import StarCardImg from './cards/star.png';
-import ChestCardImg from './cards/chest.png';
-import BackfaceCardImg from './cards/backface.png';
 import { shuffle } from './helpers';
+
+const prod = process.env.NODE_ENV === 'production';
+const base = prod ? '/mario-games/' : '';
+const MushroomCardImg = `${base}cards/mushroom.png`;
+const FlowerCardImg = `${base}cards/flower.png`;
+const Coin10CardImg = `${base}cards/coin10.png`;
+const Coin20CardImg = `${base}cards/coin20.png`;
+const StarCardImg = `${base}cards/star.png`;
+const ChestCardImg = `${base}cards/chest.png`;
+const BackfaceCardImg = `${base}cards/backface.png`;
+const HighlightImg = `${base}cards/highlight.png`;
 
 export enum CardType {
 	MUSHROOM = 'ncard/MUSHROOM',
@@ -43,16 +47,7 @@ export const getCarData = (type: CardType): CardData => {
 };
 
 export const getBackfaceImg = () => BackfaceCardImg;
-
-// export const getCardsData = (): CardData[] => {
-// 	const cardDataMap = [];
-//
-// 	for (const type of Object.values(CardType)) {
-// 		cardDataMap.push({ img: getCardImgUrl(type), type });
-// 	}
-//
-// 	return cardDataMap;
-// };
+export const getHighlightImg = () => HighlightImg;
 
 const selectTypes = (): { big: CardType[]; small: CardType[] } => {
 	const types = shuffle([...Object.values(CardType)]);
