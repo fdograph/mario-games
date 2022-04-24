@@ -2,7 +2,8 @@
     import {
       getUnsortedCardPairs,
       getBackfaceImg,
-      getHighlightImg
+      getHighlightImg,
+      soundEffects
     } from '../games/nCardGame';
 
     const backface = getBackfaceImg();
@@ -71,13 +72,19 @@
 
       if(isMatchPlay()) {
         revealed = new Set<number>([...revealed, ...currentPlay]);
-        await animateBg();
+        await Promise.all([
+          soundEffects.correctMatch().play(),
+          await animateBg(),
+        ]);
         console.log('RIGHT!!! congrats!');
       } else {
         console.log('WRONG!!!! resetting play');
-        await Promise.all([...currentPlay].map(idx =>
-        revealCard(document.querySelector(`.card[data-target-idx="${idx}"]`), 'reverse')
-        ));
+        await Promise.all([
+            soundEffects.wrongMatch().play(),
+            ...[...currentPlay].map(idx =>
+                revealCard(document.querySelector(`.card[data-target-idx="${idx}"]`), 'reverse')
+            )
+        ]);
       }
 
       currentPlay = new Set<number>();
@@ -96,6 +103,7 @@
             <div class="card-wrapper" style="--highlight-img: url({highlight});" >
                 <button
                     class="card {cardData.revealed ? 'revealed' : ''}"
+                    disabled="{cardData.revealed}"
                     title="{cardData.name}"
                     aria-label="Card"
                     data-target-idx="{index}"

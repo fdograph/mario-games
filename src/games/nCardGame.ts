@@ -11,6 +11,9 @@ const ChestCardImg = `${base}cards/chest.png`;
 const BackfaceCardImg = `${base}cards/backface.png`;
 const HighlightImg = `${base}cards/highlight.png`;
 
+const CorrectMatchSound = `${base}sounds/correct-match.wav`;
+const WrongMatchSound = `${base}sounds/wrong-match.wav`;
+
 export enum CardType {
 	MUSHROOM = 'ncard/MUSHROOM',
 	FLOWER = 'ncard/FLOWER',
@@ -48,6 +51,11 @@ export const getCarData = (type: CardType): CardData => {
 
 export const getBackfaceImg = () => BackfaceCardImg;
 export const getHighlightImg = () => HighlightImg;
+
+export const soundEffects = {
+	correctMatch: () => new Audio(CorrectMatchSound),
+	wrongMatch: () => new Audio(WrongMatchSound)
+};
 
 const selectTypes = (): { big: CardType[]; small: CardType[] } => {
 	const types = shuffle([...Object.values(CardType)]);
