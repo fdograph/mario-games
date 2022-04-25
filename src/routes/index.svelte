@@ -6,10 +6,12 @@
       soundEffects
     } from '../games/nCardGame';
 
+    const MAX_TRIES = 3;
     const backface = getBackfaceImg();
     const highlight = getHighlightImg();
     const pairs = getUnsortedCardPairs();
 
+    let tries = 0;
     let isAnimating = false;
     let revealed = new Set<number>();
     let currentPlay = new Set<number>();
@@ -19,7 +21,7 @@
       isAnimating = true;
       const animation = document.querySelector('.memory-game').animate(
           [{ backgroundPosition: '0 center' }, { backgroundPosition: ' 100px center' }],
-          { duration: 150, easing: 'steps(2)', direction: 'normal', iterations: 10 }
+          { duration: 150, easing: 'steps(2)', direction: 'normal', iterations: 10, fill: "forwards" }
       );
 
       await animation.finished;
@@ -72,19 +74,35 @@
 
       if(isMatchPlay()) {
         revealed = new Set<number>([...revealed, ...currentPlay]);
+        const isWinner = revealed.size === cards.length;
+        const soundEffect = isWinner ? soundEffects.win() : soundEffects.correctMatch();
         await Promise.all([
-          soundEffects.correctMatch().play(),
+          soundEffect.play(),
           await animateBg(),
         ]);
         console.log('RIGHT!!! congrats!');
+
+        if(isWinner) {
+          alert('You win!!!!!!, Restarting game...');
+          window.location.reload();
+        }
       } else {
+        tries += 1;
+
         console.log('WRONG!!!! resetting play');
+        const isLooser = tries >= MAX_TRIES;
+        const soundEffect = isLooser ? soundEffects.loose() : soundEffects.wrongMatch();
         await Promise.all([
-            soundEffects.wrongMatch().play(),
+          soundEffect.play(),
             ...[...currentPlay].map(idx =>
                 revealCard(document.querySelector(`.card[data-target-idx="${idx}"]`), 'reverse')
             )
         ]);
+
+        if(isLooser) {
+          alert('You loose, Restarting game...');
+          window.location.reload();
+        }
       }
 
       currentPlay = new Set<number>();
@@ -109,8 +127,8 @@
                     data-target-idx="{index}"
                     on:click={onCardClick}
                 >
-                    <img class="face back" src="{backface}" alt="Back face">
                     <img class="face front" src="{cardData.img}" alt="Front face">
+                    <img class="face back" src="{backface}" alt="Back face">
                 </button>
             </div>
         {/each}
@@ -141,6 +159,10 @@
         position: relative;
         display: flex;
         justify-content: center;
+        align-items: center;
+        justify-self: center;
+        align-self: center;
+        height: 100%;
         perspective: 1000px;
     }
 
@@ -166,6 +188,9 @@
     }
 
     .card {
+        flex-grow: 1;
+        flex-shrink: 1;
+        height: 100%;
         display: block;
         position: relative;
         aspect-ratio: 11/16;
@@ -174,11 +199,10 @@
     }
 
     .revealed {
-        transform: rotateY(2turn);
+        transform: rotateY(0turn);
     }
 
     .face {
-        content: "";
         display: flex;
         width: 100%;
         height: 100%;

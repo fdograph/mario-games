@@ -13,6 +13,8 @@ const HighlightImg = `${base}cards/highlight.png`;
 
 const CorrectMatchSound = `${base}sounds/correct-match.wav`;
 const WrongMatchSound = `${base}sounds/wrong-match.wav`;
+const LooseSound = `${base}sounds/loose.wav`;
+const WinSound = `${base}sounds/win.wav`;
 
 export enum CardType {
 	MUSHROOM = 'ncard/MUSHROOM',
@@ -54,7 +56,9 @@ export const getHighlightImg = () => HighlightImg;
 
 export const soundEffects = {
 	correctMatch: () => new Audio(CorrectMatchSound),
-	wrongMatch: () => new Audio(WrongMatchSound)
+	wrongMatch: () => new Audio(WrongMatchSound),
+	loose: () => new Audio(LooseSound),
+	win: () => new Audio(WinSound)
 };
 
 const selectTypes = (): { big: CardType[]; small: CardType[] } => {
